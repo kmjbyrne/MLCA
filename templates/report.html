@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <!-- Tested on Chrome and Firefox Community and Firefox Developer -->
+        <!-- Expect issues with IE editions below 10. Untested with Safari -->
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>
+                C00170460 Assignment A
+        </title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'bootstrap/css/bootstrap.min.css')}}">
+
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+</head>
+<body>
+
+    <div class="container">
+  <div class="jumbotron">
+    <h1>Echo-cardiogram Data Set Prediction Results</h1>
+    <p>Resize this responsive page to see the effect!</p> 
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+        <canvas id="myChart" width="800" height="400"></canvas>
+        
+
+      <h3>Column 3</h3>        
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+  </div>
+</div>
+
+    <!-- Javascript -->
+    
+    <script src="{{ url_for('static', filename = 'lib/jquery/jquery.js')}}"></script>
+    <script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.min.js')}}"></script>
+    <script src="{{ url_for('static', filename = 'lib/chartjs/Chart.js')}}"></script>
+    
+
+    <footer class="container-fluid text-center">
+        <span type="footer_expander" class="glyphicon glyphicon-chevron-down" data-toggle="collapse" data-target="#clpbl"></span>
+        <div id ="clpbl" class="collapse">
+            <p>Designed & Devloped by Keith Michael Byrne (C00170460)</p>
+        </div>
+    </footer>
+
+</body>
+
+<script>
+            var data = 
+            {
+                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                datasets: [
+                    {
+                        label: "Original Dataset",
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(220,220,220,1)",
+                        data: [65, 59, 80, 81, 56, 55, 40]
+                    },
+                    {
+                        label: "Neural Network Predicted Dataset",
+                        fillColor: "rgba(0,0,0,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: [28, 48, 40, 19, 86, 27, 90]
+                    }
+                ]
+            };
+
+            var ctx = document.getElementById("myChart").getContext("2d");
+            var myLineChart = new Chart(ctx).Line(data);
+        </script>
+
+</html>

@@ -1,12 +1,14 @@
 import csv
 import numpy as np
 
-class DataItem:
+class DataItem(dict):
+
 	def __init__(self, **kwargs):
 		dict.__init__(self, kwargs)
 
 	def __setattr__(self, key, value):
 		self[key]= value
+
 	def __getattr__(self, key):
 		try:
 			return self[key]
@@ -32,8 +34,9 @@ def load_echo_data(filename):
 	with open(filename, 'rb') as f:
 		data_file = csv.reader(f)
 		temp = next(data_file)
-		n_samples = int(temp[0])
-		n_features = int(temp[1])
+		n_samples = float(temp[0])
+		n_features = float(temp[1])
+
 		data = np.empty((n_samples, n_features))
 		target = np.empty((n_samples,))
 		temp = next(data_file) #names of features
