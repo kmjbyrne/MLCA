@@ -1,32 +1,49 @@
 import csv
+import numpy as np
 
 class DataItem:
+	def __init__(self, **kwargs):
+		dict.__init__(self, kwargs)
 
-	def __init__(self, a,b,c,d,e,f,g,h,i,j,k,l,m,n):
-		self.survival = a
-		self.still_alive = b
-		self.age_of_attack = c
-		self.pericardial_effusion = d
-		self.fractional_shortening = e
-		self.e_point_septal_seperation = f
-		self.left_ventricular_end_diastolic_dimension = g
-		self.wall_motion_score = h
-		self.wall_motion_index = i
-		self.mult = j
-		self.name = k
-		self.group = l
-		self.alive_after_year = m
+	def __setattr__(self, key, value):
+		self[key]= value
+	def __getattr__(self, key):
+		try:
+			return self[key]
+		except KeyError as e:
+			print(e)
+
+	def __setstate__(self, state):
+		pass
+
+def load_echo_data(filename):
+	"""
+	Load and return echo-cardiogram dataset (regression)
+
+	===========================
+
+	Sample data specs:
 
 
-def loadInputData(filename):
-	with open(filename, 'rb') as data_file:
-		loaded = csv.reader(data_file, delimiter =',')
-		memory_data = []
-		for row in loaded:
-			obj = DataItem(row[0], row[1], row[2], row[3], 
-				row[4], row[5], row[6], row[7], row[8], 
-				row[9], row[10], row[11], row[12], "")
-			memory_data.append(obj)
-		
-		for x in memory_data:
-			print(x.survival)
+	===========================
+
+	"""
+
+	with open(filename, 'rb') as f:
+		data_file = csv.reader(f)
+		temp = next(data_file)
+		n_samples = int(temp[0])
+		n_features = int(temp[1])
+		data = np.empty((n_samples, n_features))
+		target = np.empty((n_samples,))
+		temp = next(data_file) #names of features
+		feature_names = np.array(temp)
+
+		for i, d in enumerate(data_file):
+			data[i] = np.asarray(d[:-1], dtype=np.float)
+			target[i] = np.asarray(d[-1], dtype=np.float)
+
+	return DataItem(data=data,
+					target=target,
+					feature_names=feature_names[:-1],
+					DESCR="echo-cardiogram")
