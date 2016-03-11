@@ -35,9 +35,8 @@ def report():
 		print(e)
 
 	for element in predicted_data:
-		print(element)
+		pass
 
-	print(predicted_data)
 	return render_template("report.html", data=predicted_data)
 
 if __name__ == "__main__":

@@ -44,7 +44,13 @@ def load_echo_data(filename):
 
 		for i, d in enumerate(data_file):
 			data[i] = np.asarray(d[:-1], dtype=np.float)
-			target[i] = np.asarray(d[-1], dtype=np.float)
+			target[i] = np.asarray(d[-1], dtype=np.int)
+
+		for x in target:
+			print(x)
+
+		for x in data:
+			print(x)
 
 	return DataItem(data=data,
 					target=target,
