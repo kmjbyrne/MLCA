@@ -26,21 +26,32 @@
 </head>
 <body>
 
-    <div class="container">
-  <div class="jumbotron">
-    <h1>Echo-cardiogram Data Set Prediction Results</h1>
-    <p>Resize this responsive page to see the effect!</p> 
-  </div>
-  <div class="row">
-    <div class="col-sm-12">
-        <canvas id="myChart" width="800" height="400"></canvas>
-        
-
-      <h3>Column 3</h3>        
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+<div class="container">
+    <div class="jumbotron">
+        <h1>Echo-cardiogram Data Set Prediction Results</h1>
+        <p>Resize this responsive page to see the effect!</p> 
     </div>
-  </div>
+
+    <div class = "row">
+        <div class="row">
+            <div class="col-12 text-centre">
+                <canvas id="myChart" width="800" height="400"></canvas>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 text-centre">
+                <canvas id="predictChart" width="800" height="400"></canvas>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 text-centre">
+                <canvas id="probabilityChart" width="800" height="400"></canvas>
+            </div>
+        </div>
+
+    </div>
 </div>
 
     <!-- Javascript -->
@@ -62,7 +73,10 @@
 <script>
             var data = 
             {
-                labels: ["January", "February", "March", "April", "May", "June", "July"],
+                labels: [   {% for item in data %}
+                                "{{item.index}}",
+                            {% endfor %}
+                        ],
                 datasets: [
                     {
                         label: "Original Dataset",
@@ -72,7 +86,10 @@
                         pointStrokeColor: "#fff",
                         pointHighlightFill: "#fff",
                         pointHighlightStroke: "rgba(220,220,220,1)",
-                        data: [65, 59, 80, 81, 56, 55, 40]
+                        data :  [   {% for item in data %}
+                                            {{item.base}},
+                                    {% endfor %}
+                                ]
                     },
                     {
                         label: "Neural Network Predicted Dataset",
@@ -82,13 +99,82 @@
                         pointStrokeColor: "#fff",
                         pointHighlightFill: "#fff",
                         pointHighlightStroke: "rgba(151,187,205,1)",
-                        data: [28, 48, 40, 19, 86, 27, 90]
+                        data :  [   {% for item in data %}
+                                            {{item.prediction}},
+                                    {% endfor %}
+                                ]
+                    }
+                ]
+            };
+
+            var predictionData = 
+            {
+                labels: [   {% for item in predict_data %}
+                                "{{item.label}}",
+                            {% endfor %}
+                        ],
+                datasets: [
+                    {
+                        label: "Neural Network Predicted Dataset",
+                        fillColor: "rgba(0,0,0,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data :  [   {% for item in predict_data %}
+                                            {{item.value}},
+                                    {% endfor %}
+                                ]
+                    }
+                ]
+            };
+
+
+            var probabilityData = 
+            {
+                labels: [   {% for item in probability_data %}
+                                "{{item.index}}",
+                            {% endfor %}
+                        ],
+                datasets: [
+                    {
+                        label: "Neural Network Predicted Dataset",
+                        fillColor: "rgba(0,0,0,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data :  [   {% for item in probability_data %}
+                                            {{item.base}},
+                                    {% endfor %}
+                                ]
+                    },
+                    {
+                        label: "Neural Network Predicted Dataset",
+                        fillColor: "rgba(0,0,0,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data :  [   {% for item in probability_data %}
+                                            {{item.prediction}},
+                                    {% endfor %}
+                                ]
                     }
                 ]
             };
 
             var ctx = document.getElementById("myChart").getContext("2d");
-            var myLineChart = new Chart(ctx).Line(data);
+            var myLineChart = new Chart(ctx).Bar(data);
+
+            var ctx = document.getElementById("predictChart").getContext("2d");
+            var myLineChart = new Chart(ctx).Bar(predictionData);
+
+            var ctx = document.getElementById("probabilityChart").getContext("2d");
+            var myLineChart = new Chart(ctx).Line(probabilityData);
         </script>
 
 </html>

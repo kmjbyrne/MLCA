@@ -44,13 +44,28 @@ def load_echo_data(filename):
 
 		for i, d in enumerate(data_file):
 			data[i] = np.asarray(d[:-1], dtype=np.float)
-			target[i] = np.asarray(d[-1], dtype=np.int)
+			target[i] = np.asarray(d[-1], dtype=np.float)
 
-		for x in target:
-			print(x)
+	return DataItem(data=data,
+					target=target,
+					feature_names=feature_names[:-1],
+					DESCR="echo-cardiogram")
 
-		for x in data:
-			print(x)
+def loadTestData(filename):
+	with open(filename, 'rb') as f:
+		data_file = csv.reader(f)
+		temp = next(data_file)
+		n_samples = float(temp[0])
+		n_features = float(temp[1])
+
+		data = np.empty((n_samples, n_features))
+		target = np.empty((n_samples,))
+		temp = next(data_file) #names of features
+		feature_names = np.array(temp)
+
+		for i, d in enumerate(data_file):
+			data[i] = np.asarray(d[:-1], dtype=np.float)
+
 
 	return DataItem(data=data,
 					target=target,
