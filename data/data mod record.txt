@@ -1,0 +1,11 @@
+Averaging of question marked data
+rounding of age values
+defaulted GROUP values to zero (no effect on training)
+name set to zero (no effect)
+
+Rounded average for age to 1 decimal place
+rounded average for fractional shortening to 2 places
+average for pericardial effusion
+
+Training data set is the valid target data set with 0 or 1
+Test/Comparison data is the data set with invalid results for death - ? values
