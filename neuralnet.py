@@ -21,7 +21,7 @@ class ClassifierNeuralNet():
 				Layer("Sigmoid", units =100),
 				Layer("Softmax")],
 			learning_rate = 0.001,
-			n_iter = 100)
+			n_iter = 200)
 
 	def train(self):
 		data = parser.load_echo_data('data/training_data.csv')
@@ -35,9 +35,10 @@ class RegressorNeuralNet():
 		self.nn = Regressor(
 		    layers=[
 		        Layer("Sigmoid", units=100),
+		        Layer("Sigmoid", units=47),
 		        Layer("Linear")],
 		    learning_rate=0.02,
-		    n_iter=10)
+		    n_iter=200)
 
 	def train(self):
 		data = parser.load_echo_data('data/training_data.csv')
@@ -82,6 +83,7 @@ def report():
 		item['index'] = str(i)
 		item['prediction'] = x
 		item['base'] = standard_data.target[i]
+		item['probability_differential'] = abs(float(x + 1.0) - float(standard_data.target[i] + 1.0))
 		i = i + 1
 		report_set.append(item)
 
@@ -97,20 +99,25 @@ def report():
 
 	#test_data_results = regression_net.predictData(test_set.data)
 
+	ratios = []
 	probability_report_set = []
 	for x in regressor_data:
 		item={}
 		item['index'] = str(i)
-		item['prediction'] = x
-		print(x)
-		item['base'] = standard_data.target[i]
+		item['prediction'] = data[i]
+		item['chance'] = round(x, 2)
+		item['base'] = data[i]
+		item['probability_differential'] = round(abs(x - data[i]), 2)
 		i = i + 1
 		probability_report_set.append(item)
 
+	info={}
+	info['classifier'] = vars(classifier_net.nn)
+	info['regression'] = vars(classifier_net.nn)
 	#print(classifier_net.nn.get_parameters())
 	#print(regression_net.nn.get_parameters())7
 
-	return render_template("report.html", data=report_set, predict_data = test_report_set, probability_data=probability_report_set)
+	return render_template("report.html", data=report_set, predict_data = test_report_set, probability_data=probability_report_set, info=info)
 
 if __name__ == "__main__":
 	app.run(debug=True)

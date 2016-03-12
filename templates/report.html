@@ -15,6 +15,26 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="{{ url_for('static', filename = 'bootstrap/css/bootstrap.min.css')}}">
+        <style>
+            h1,h2,h3,h4,h5,h6{
+                color: #FFF;
+            }
+
+            p{
+                color: #00CCFF;
+                font-size: 20px;
+            }
+
+            #table-data{
+                margin: 20px;
+                color: #FFF;
+            }
+
+            #table-data thead{
+                color: #00CCFF;
+                text-shadow: 0px 0px 5px #00CCFF;
+            }
+        </style>
 
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -24,33 +44,103 @@
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 </head>
-<body>
+<body style="background-color: #333">
 
 <div class="container">
     <div class="jumbotron">
         <h1>Echo-cardiogram Data Set Prediction Results</h1>
-        <p>Resize this responsive page to see the effect!</p> 
+        <img src= "{{ url_for('static', filename = 'img/heart.png')}}">
+        <img src= "{{ url_for('static', filename = 'img/ecg.png')}}">
+    </div>
+</div>
+
+<div>
+
+<div class = "container-fluid">
+    <div class = "row">
+        <div class="col-12 text-center">
+            <p>Infomation based off of the original data set with no training. This data is classified into two groupings:</p>
+            <ul>
+                <li>Alive After 1 Year of Record</li>
+                <li>Deceased Within 1 Year of Record</li>
+            </ul>
+
+            <p> {{info.classifer}} </p>
+            <p> {{info.regression}} </p>
+        </div>
     </div>
 
     <div class = "row">
+            <div class="col-lg-6 col-sm-6 text-center">
+                <h5>Initial Data Set Results:</h5>
+
+                <canvas id="base_chart" width="" height=""></canvas>
+            </div>
+            <div class="col-lg-6 col-sm-6 text-center">
+                <h5>Network Predictions Show:</h5>
+                <canvas id="prediction_chart" width="" height=""></canvas>
+            </div>
+    </div>
+
+    <div class = "row">
+
         <div class="row">
-            <div class="col-12 text-centre">
-                <canvas id="myChart" width="800" height="400"></canvas>
+            <div class="col-lg-12 col-sm-12 text-center">
+                <canvas id="predictChart" width="" height=""></canvas>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-12 text-centre">
-                <canvas id="predictChart" width="800" height="400"></canvas>
+            <div class="col-lg-12 col-sm-12 text-center">
+                <canvas id="probabilityChart" width="1024" height="400"></canvas>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12 text-centre">
-                <canvas id="probabilityChart" width="800" height="400"></canvas>
-            </div>
-        </div>
+    </div>
 
+    <div class = "row" id = "table-data">
+        <h2>Data Results</h2>
+        <p>This table shows the base results and predictions:</p>            
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Alive (After 1 Year)</th>
+                    <th>Predicted Survival</th>
+                    <th>Survival Probability</th>
+                    <th>Probability Differential</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for item in probability_data %}
+                    <tr>
+                        <td>{{item.index}}</td>
+                        
+                        {% if item.base == 1 %}
+                            <td>True</td>
+                        {% else %}
+                            <td>False</td>
+                        {% endif %}
+
+                        {% if item.prediction == 1 %}
+                            <td>True</td>
+                        {% else %}
+                            <td>False</td>
+                        {% endif %}
+
+                        {% if item.chance > 0.45 %}
+                            <td>{{item.chance}} % (Likely)</td>
+                        {% else %}
+                            <td>{{item.chance}} % (Unlikely)</td>
+                        {% endif %}
+
+                        <td>{{item.probability_differential}}</td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -59,53 +149,41 @@
     <script src="{{ url_for('static', filename = 'lib/jquery/jquery.js')}}"></script>
     <script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.min.js')}}"></script>
     <script src="{{ url_for('static', filename = 'lib/chartjs/Chart.js')}}"></script>
-    
-
-    <footer class="container-fluid text-center">
-        <span type="footer_expander" class="glyphicon glyphicon-chevron-down" data-toggle="collapse" data-target="#clpbl"></span>
-        <div id ="clpbl" class="collapse">
-            <p>Designed & Devloped by Keith Michael Byrne (C00170460)</p>
-        </div>
-    </footer>
 
 </body>
 
 <script>
-            var data = 
-            {
-                labels: [   {% for item in data %}
-                                "{{item.index}}",
-                            {% endfor %}
-                        ],
-                datasets: [
-                    {
-                        label: "Original Dataset",
-                        fillColor: "rgba(220,220,220,0.2)",
-                        strokeColor: "rgba(220,220,220,1)",
-                        pointColor: "rgba(220,220,220,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(220,220,220,1)",
-                        data :  [   {% for item in data %}
-                                            {{item.base}},
-                                    {% endfor %}
-                                ]
-                    },
-                    {
-                        label: "Neural Network Predicted Dataset",
-                        fillColor: "rgba(0,0,0,0.2)",
-                        strokeColor: "rgba(151,187,205,1)",
-                        pointColor: "rgba(151,187,205,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(151,187,205,1)",
-                        data :  [   {% for item in data %}
-                                            {{item.prediction}},
-                                    {% endfor %}
-                                ]
-                    }
-                ]
-            };
+            var base_ratio_data = 
+            [
+                {
+                    value: 15,
+                    color:"#F7464A",
+                    highlight: "#FF5A5E",
+                    label: "Living After 1 Year"
+                },
+                {
+                    value: 50,
+                    color: "#000000",
+                    highlight: "#5AD3D1",
+                    label: "Deceased Before 1 Year"
+                }
+            ];
+
+            var predicted_ratio_data = 
+            [
+                {
+                    value: 20,
+                    color:"#F7464A",
+                    highlight: "#FF5A5E",
+                    label: "Living After 1 Year"
+                },
+                {
+                    value: 45,
+                    color: "#000000",
+                    highlight: "#5AD3D1",
+                    label: "Deceased Before 1 Year"
+                }
+            ];
 
             var predictionData = 
             {
@@ -140,14 +218,14 @@
                 datasets: [
                     {
                         label: "Neural Network Predicted Dataset",
-                        fillColor: "rgba(0,0,0,0.2)",
-                        strokeColor: "rgba(151,187,205,1)",
+                        fillColor: "rgba(0,200,240,0.2)",
+                        strokeColor: "rgba(0,200,240,1)",
                         pointColor: "rgba(151,187,205,1)",
                         pointStrokeColor: "#fff",
                         pointHighlightFill: "#fff",
                         pointHighlightStroke: "rgba(151,187,205,1)",
                         data :  [   {% for item in probability_data %}
-                                            {{item.base}},
+                                        {{item.base}},
                                     {% endfor %}
                                 ]
                     },
@@ -160,21 +238,33 @@
                         pointHighlightFill: "#fff",
                         pointHighlightStroke: "rgba(151,187,205,1)",
                         data :  [   {% for item in probability_data %}
-                                            {{item.prediction}},
+                                        {{item.chance}},
+                                    {% endfor %}
+                                ]
+                    },
+                    {
+                        label: "Neural Network Predicted Dataset",
+                        fillColor: "rgba(0,0,0,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data :  [   {% for item in probability_data %}
+                                        {{item.prediction}},
                                     {% endfor %}
                                 ]
                     }
                 ]
             };
 
-            var ctx = document.getElementById("myChart").getContext("2d");
-            var myLineChart = new Chart(ctx).Bar(data);
+            var ctx = document.getElementById("base_chart").getContext("2d");
+            var base_ratio = new Chart(ctx).Pie(base_ratio_data);
 
-            var ctx = document.getElementById("predictChart").getContext("2d");
-            var myLineChart = new Chart(ctx).Bar(predictionData);
+            var ctx = document.getElementById("prediction_chart").getContext("2d");
+            var prediction_ratio = new Chart(ctx).Pie(predicted_ratio_data);
 
             var ctx = document.getElementById("probabilityChart").getContext("2d");
             var myLineChart = new Chart(ctx).Line(probabilityData);
         </script>
-
 </html>
